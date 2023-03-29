@@ -349,7 +349,7 @@ trait LogsActivity
                 continue;
             }
 
-            $changes[$attribute] = in_array($attribute, $model->activitylogOptions->attributeRawValues)
+            $changes[$attribute] = (!is_null($model->activitylogOptions) && in_array($attribute, $model->activitylogOptions->attributeRawValues))
                 ? $model->getAttributeFromArray($attribute)
                 : $model->getAttribute($attribute);
 
