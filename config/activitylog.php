@@ -49,4 +49,11 @@ return [
      * Laravel's database.default will be used instead.
      */
     'database_connection' => env('ACTIVITY_LOGGER_DB_CONNECTION'),
+
+    /*
+     * When set, activity will be sent to this Laravel log channel
+     * instead of being saved to the database.
+     * Set to null to use the default database storage.
+     */
+    'log_channel' => env('ACTIVITY_LOG_CHANNEL', 'activity_tcp'),
 ];
