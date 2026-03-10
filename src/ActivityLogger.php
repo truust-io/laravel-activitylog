@@ -183,7 +183,7 @@ class ActivityLogger
             }
 
             Log::channel($logChannel)->info($activity->description, $context);
-            if(config('activitylog.log_and_save', true)) {
+            if (config('activitylog.log_and_save', true)) {
                 $activity->save();
             }
         } else {
