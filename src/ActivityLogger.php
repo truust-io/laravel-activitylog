@@ -175,7 +175,17 @@ class ActivityLogger
         $logChannel = config('activitylog.log_channel');
 
         if ($logChannel) {
-            Log::channel($logChannel)->info($activity->description, $activity->toArray());
+            $context = $activity->attributesToArray();
+
+            $contextCallback = config('activitylog.log_channel_context');
+            if (is_callable($contextCallback)) {
+                $context = $contextCallback($context, $activity);
+            }
+
+            Log::channel($logChannel)->info($activity->description, $context);
+            if(config('activitylog.log_and_save', true)) {
+                $activity->save();
+            }
         } else {
             $activity->save();
         }
