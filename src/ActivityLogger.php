@@ -7,6 +7,7 @@ use DateTimeInterface;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
@@ -171,7 +172,23 @@ class ActivityLogger
             $this->tap([$activity->subject, 'tapActivity'], $activity->event ?? '');
         }
 
-        $activity->save();
+        $logChannel = config('activitylog.log_channel');
+
+        if ($logChannel) {
+            $context = $activity->attributesToArray();
+
+            $contextCallback = config('activitylog.log_channel_context');
+            if (is_callable($contextCallback)) {
+                $context = $contextCallback($context, $activity);
+            }
+
+            Log::channel($logChannel)->info($activity->description, $context);
+            if (config('activitylog.log_and_save', true)) {
+                $activity->save();
+            }
+        } else {
+            $activity->save();
+        }
 
         $this->activity = null;
 
